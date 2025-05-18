@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form onsubmit="onSubmit(event)">
+       Enter your text color: <br> <input type="text" id="tc"><br>
+       Enter your background color: <br> <input type="text" id="bc"><br>
+       Enter your text: <br> <input type="text" id="text"><br>
+       <button type="submit">Change</button>
+    </form>
+
+    <div id="demo">
+
+    </div>
+    <script>
+        function onSubmit(event){
+            event.preventDefault();
+            tColor = document.getElementById('tc').value;
+            bColor = document.getElementById('bc').value;
+            tContent = document.getElementById('text').value;
+
+            document.getElementById('demo').innerHTML = tContent;
+            document.getElementById('demo').style.background = bColor;
+            document.getElementById('demo').style.color = tColor;
+
+        }
+    </script>
+</body>
+</html>

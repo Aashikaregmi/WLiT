@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 id="demo">Watch Me Grow!</h1>
+
+    <form onsubmit="changeSize(event)">
+        Enter a number: <br> <input type="number" id="size"><br>
+        <button type="submit">Click me</button>
+    </form>
+    
+    <script>
+        
+        function changeSize(event){
+            event.preventDefault(); 
+            textSize = document.getElementById('size').value;
+            document.getElementById('demo').style.fontSize = textSize + "px";
+        }
+
+    </script>
+</body>
+</html>
