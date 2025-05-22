@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Current Buses </title>
+  <link rel="stylesheet" href="/stylesheets/style.css" />
+
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <img src="/images/logo.png" alt="Logo" class="logo" />
+      <b>Pokhara Bus Routes</b>
+    </div>
+    <div class="nav-center">
+      <h1> Admin Panel</h1>
+    </div>
+    <div class="nav-right">
+      <button class="btn btn-danger">LogOut</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <aside class="sidebar">
+      <ul>
+        <li class="active"><a href="/buses">Show Buses</a></li>
+        <li><a href="/buses/add">Add Buses</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content row">
+  <div class="scroll-container">
+    <% busList.forEach(function(bus) { %>
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title bus-name"><%= bus.busNumber %></h3>
+          <h4 class="card-subtitle">Your Bus Departs in: 
+            <%= new Date(bus.departureTime).toLocaleTimeString('en-US', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            }) %>
+          </h4>
+          <p class="card-text">From: <%= bus.pickUp %></p>
+          <p class="card-text">To: <%= bus.destination %></p>
+          <h4 class="card-subtitle">Fare: Rs. <%= bus.fare %></h4>
+          <button class="btn btn-primary">
+            <a href="/buses/edit/<%= bus._id %>" class="text-white">Edit</a>
+          </button>
+          <form action="/buses/saveDeleted/<%= bus._id %>" method="POST" style="display:inline;">
+            <button class="btn btn-danger" type="submit">Delete</button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</main>
+
+  </div>
+</body>
+</html>

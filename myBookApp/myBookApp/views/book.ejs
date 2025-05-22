@@ -37,6 +37,7 @@
                     <button class="btn btn-primary text-white">
                         <a href="/book/edit/<%=book._id%>" class="text-white">Edit</a>
                     </button>
+                    
                     <form action="/book/saveDeleted/<%= book._id %>" method="POST" style="display:inline;">
                      <button class="btn btn-danger text-white" type="submit">Delete</button>
                     </form>

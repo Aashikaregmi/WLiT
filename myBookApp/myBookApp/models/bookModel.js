@@ -1,0 +1,26 @@
+const mongoose = require('mongoose')
+const BookSchema = mongoose.Schema(
+    {
+        title: {
+            type: String,
+            required: [true, "Please enter the book title"], //for validation
+        },
+        author: {
+            type: String,
+            required: [true, "Please enter the book author"],
+        },
+        description: {
+            type: String,
+            required: [true, "Please enter the book description"],
+        },
+        genre: {
+            type: String,
+            required: [true, "Please enter the book genre"],
+        },
+  },
+  {
+    timestamps: true,
+  }
+)
+const Book = mongoose.model("Book", BookSchema)
+module.exports = Book
