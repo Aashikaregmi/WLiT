@@ -3,7 +3,8 @@ const BusSchema = mongoose.Schema(
     {
         busNumber: {
             type: Number,
-            required: [true, "Please enter the bus number"], //for validation
+            required: [true, "Please enter the bus number"],
+            min: [1, "Min bus no is 1"], //for validation
         },
         departureTime: {
             type: Date,
@@ -20,6 +21,7 @@ const BusSchema = mongoose.Schema(
         fare: {
             type: Number,
             required: [true, "Please enter the travel fare"],
+            min: [0, "Fare cannot be negative"],
         },
   },
   {

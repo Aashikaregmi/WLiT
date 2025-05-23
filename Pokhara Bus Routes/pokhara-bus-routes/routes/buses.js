@@ -81,5 +81,52 @@ router.post('/saveEdited/:_id', async (req, res) => {
   }
 });
 
+router.post('/saveDeleted/:_id', async (req, res) => {
+  try {
+    await Bus.findByIdAndDelete(req.params._id);
+    res.redirect('/buses');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error deleting bus');
+  }
+});
+
+//USER ROUTES ONLY
+
+// Show buses for users (profile page)
+router.get('/user', async (req, res) => {
+  try {
+    const buses = await Bus.find({});
+    res.render('dashboard/selectBus', { buses }); // Make sure to pass buses
+  } catch (err) {
+    console.error('Error fetching page for user:', err);
+    res.status(500).send("Something went wrong");
+  }
+});
+router.get('/profile', async (req, res) => {
+  try {
+    const buses = await Bus.find({});
+    res.render('dashboard/profile', { buses }); // Make sure to pass buses
+  } catch (err) {
+    console.error('Error fetching page for user:', err);
+    res.status(500).send("Something went wrong");
+  }
+});
+
+// Filter buses by pickup location
+// router.get('/select', async (req, res) => {
+//   const { pickup } = req.query;
+
+//   try {
+//     const buses = await Bus.find({ pickUp: pickup });
+//     res.render('dashboard/buses', { buses, pickup });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Error fetching filtered buses");
+//   }
+// });
+
+
+
 module.exports = router;
 

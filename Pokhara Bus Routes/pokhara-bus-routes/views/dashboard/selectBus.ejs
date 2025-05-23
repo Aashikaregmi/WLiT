@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Current Buses </title>
+  <link rel="stylesheet" href="/stylesheets/style.css" />
+
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <img src="/images/logo.png" alt="Logo" class="logo" />
+      <b>Pokhara Bus Routes</b>
+    </div>
+    <div class="nav-center">
+      <h1> Hello User</h1>
+    </div>
+    <div class="nav-right">
+      <button class="btn btn-danger">LogOut</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <aside class="sidebar">
+      <ul>
+        <li class="active"><a href="/buses/profile/">Profile</a></li>
+        <li class="active"><a href="/buses/user/">Available Buses</a></li>
+      </ul>
+    </aside>
+
+    <main class="">
+      
+     <form action="./buses.ejs">
+     <div class="dropdown">
+        <h1> From where do we pick you up??☺️</h1>
+        <button class="dropbtn">Select</button>
+        <div class="dropdown-content"> 
+           <a href="#">Link1</a>
+        </div>
+
+      </div> 
+
+</form>
+    </main>
+
+  </div>
+</body>
+</html>
