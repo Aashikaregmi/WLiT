@@ -113,19 +113,18 @@ router.get('/profile', async (req, res) => {
   }
 });
 
-// Filter buses by pickup location
-// router.get('/select', async (req, res) => {
-//   const { pickup } = req.query;
+// Show buses filtered by pickup point
+router.get('/user/filter', async (req, res) => {
+  const { pickup } = req.query;
 
-//   try {
-//     const buses = await Bus.find({ pickUp: pickup });
-//     res.render('dashboard/buses', { buses, pickup });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Error fetching filtered buses");
-//   }
-// });
-
+  try {
+    const filteredBuses = await Bus.find({ pickUp: pickup });
+    res.render('dashboard/buses', { buses: filteredBuses, pickup });
+  } catch (err) {
+    console.error('Error filtering buses:', err);
+    res.status(500).send("Failed to fetch buses");
+  }
+});
 
 
 module.exports = router;

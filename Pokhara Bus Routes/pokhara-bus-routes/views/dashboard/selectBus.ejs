@@ -31,17 +31,22 @@
 
     <main class="">
       
-     <form action="./buses.ejs">
-     <div class="dropdown">
-        <h1> From where do we pick you up??☺️</h1>
-        <button class="dropbtn">Select</button>
-        <div class="dropdown-content"> 
-           <a href="#">Link1</a>
-        </div>
+     <form action="/buses/user/filter" method="GET">
+  <div class="dropdown">
+    <h1>From where do we pick you up? ☺️</h1>
+    <select class="dropdown-select" name="pickup" onchange="this.form.submit()">
+      <option selected disabled class="dropdown"> Select Pickup Point </option>
+      <% 
+      const uniquePickups = [...new Set(buses.map(bus => bus.pickUp))];
+      uniquePickups.forEach(function(pickUp) {
+      %>
 
-      </div> 
-
+        <option value="<%= pickUp %>"><%= pickUp %></option>
+      <% }) %>
+    </select>
+  </div>
 </form>
+
     </main>
 
   </div>

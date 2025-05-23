@@ -35,7 +35,7 @@
 
         <form action="/buses/save" method="POST">
           <label for="busNumber">Bus No:</label>
-          <input type="text" id="busNumber" name="busNumber" required />
+          <input type="text" id="busNumber" name="busNumber" required min="1" />
 
           <label for="pickUp">Pickup Point:</label>
           <input type="text" id="pickUp" name="pickUp" required />
@@ -49,7 +49,7 @@
           <label for="fare">Bus Fare:</label>
           <input type="number" id="fare" name="fare" required min ="0" />
 
-          <input type="submit" value="Save" class="btn btn-primary" />
+          <input type="submit" value="Save" class="btn btn-primary" min="0" />
         </form>
       </section>
     </main>
