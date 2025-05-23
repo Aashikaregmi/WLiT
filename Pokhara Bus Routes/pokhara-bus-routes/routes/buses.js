@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Bus = require('../models/buses.js');
+const User = require('../models/users'); // Adjust path if your file is named differently
+
 
 router.get('/', async (req, res) => {
   try {
@@ -17,16 +19,25 @@ router.get('/add', (req, res) => {
 
 router.post('/save', async (req, res) => {
   try {
-    const timeString = req.body.departureTime; // format: "HH:mm"
-    const [hours, minutes] = timeString.split(':').map(Number);
-    const now = new Date();
-    const departureDate = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      hours,
-      minutes
-    );
+    let hours = parseInt(req.body.departureHour);
+const minutes = parseInt(req.body.departureMinute);
+const ampm = req.body.ampm;
+
+if (ampm === 'PM' && hours !== 12) {
+  hours += 12;
+} else if (ampm === 'AM' && hours === 12) {
+  hours = 0;
+}
+
+const now = new Date();
+const departureDate = new Date(
+  now.getFullYear(),
+  now.getMonth(),
+  now.getDate(),
+  hours,
+  minutes
+);
+
 
     const busData = {
       busNumber: req.body.busNumber,
@@ -60,10 +71,22 @@ router.get('/edit/:_id', async (req, res) => {
 
 
 router.post('/saveEdited/:_id', async (req, res) => {
-  const { busNumber, pickUp, destination, departureTime, fare } = req.body;
+  const { busNumber, pickUp, destination, hour, minute, ampm, fare } = req.body;
 
-  const today = new Date().toISOString().split('T')[0]; // e.g., "2025-05-22"
-  const departure = new Date(`${today}T${departureTime}`); // e.g., "2025-05-22T08:00"
+  let hourInt = parseInt(hour, 10);
+  const minuteInt = parseInt(minute, 10);
+
+  if (ampm === 'PM' && hourInt < 12) hourInt += 12;
+  if (ampm === 'AM' && hourInt === 12) hourInt = 0;
+
+  const now = new Date();
+  const departure = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hourInt,
+    minuteInt
+  );
 
   try {
     await Bus.findByIdAndUpdate(req.params._id, {
@@ -74,12 +97,13 @@ router.post('/saveEdited/:_id', async (req, res) => {
       fare,
     });
 
-    res.redirect('/buses'); // 
+    res.redirect('/buses');
   } catch (err) {
     console.error(err);
     res.status(500).send('Error saving bus update');
   }
 });
+
 
 router.post('/saveDeleted/:_id', async (req, res) => {
   try {
@@ -96,29 +120,60 @@ router.post('/saveDeleted/:_id', async (req, res) => {
 // Show buses for users (profile page)
 router.get('/user', async (req, res) => {
   try {
-    const buses = await Bus.find({});
-    res.render('dashboard/selectBus', { buses }); // Make sure to pass buses
+    const now = new Date();
+    const buses = await Bus.find({ departureTime: { $gte: now } }); // Only future buses
+    res.render('dashboard/selectBus', { buses });
   } catch (err) {
     console.error('Error fetching page for user:', err);
     res.status(500).send("Something went wrong");
   }
 });
+
 router.get('/profile', async (req, res) => {
-  try {
-    const buses = await Bus.find({});
-    res.render('dashboard/profile', { buses }); // Make sure to pass buses
-  } catch (err) {
-    console.error('Error fetching page for user:', err);
-    res.status(500).send("Something went wrong");
+  // Let's assume you're storing selected buses in the user profile
+  const user = await User.findById(req.session.userId).populate('buses');
+
+  const currentTime = new Date();
+  const busesWithTime = user.buses.map(bus => {
+    const departureTime = new Date(bus.departureTime); // Make sure this is a Date
+    const diffInMinutes = Math.floor((departureTime - currentTime) / (1000 * 60));
+    return {
+      ...bus.toObject(), // if it's a Mongoose doc
+      departureInMinutes: diffInMinutes
+    };
+  });
+
+  // Check alert and alarm conditions
+  let showAlert = false;
+  let showAlarm = false;
+  for (const bus of busesWithTime) {
+    if (bus.departureInMinutes <= 30 && bus.departureInMinutes > 5) {
+      showAlert = true;
+    } else if (bus.departureInMinutes <= 5 && bus.departureInMinutes > 0) {
+      showAlarm = true;
+    }
   }
+
+  res.render('dashboard/profile', {
+    buses: busesWithTime,
+    showAlert,
+    showAlarm
+  });
 });
+
+
 
 // Show buses filtered by pickup point
 router.get('/user/filter', async (req, res) => {
   const { pickup } = req.query;
 
   try {
-    const filteredBuses = await Bus.find({ pickUp: pickup });
+    const now = new Date();
+    const filteredBuses = await Bus.find({
+      pickUp: pickup,
+      departureTime: { $gte: now }, // Only future buses
+    });
+
     res.render('dashboard/buses', { buses: filteredBuses, pickup });
   } catch (err) {
     console.error('Error filtering buses:', err);
@@ -126,6 +181,27 @@ router.get('/user/filter', async (req, res) => {
   }
 });
 
+router.post('/user/select/:id', async (req, res) => {
+  try {
+    const bus = await Bus.findById(req.params.id);
+    if (!bus) return res.status(404).send("Bus not found");
+
+    // Calculate time difference
+    const now = new Date();
+    const departureTime = new Date(bus.departureTime);
+    const diffMinutes = Math.floor((departureTime - now) / (1000 * 60));
+
+    res.render('dashboard/profile', {
+      buses: [bus],
+      showAlert: diffMinutes <= 30 && diffMinutes > 5,
+      showAlarm: diffMinutes <= 5,
+      departureInMinutes: diffMinutes
+    });
+  } catch (err) {
+    console.error('Error selecting bus:', err);
+    res.status(500).send("Server error");
+  }
+});
 
 module.exports = router;
 

@@ -6,6 +6,26 @@ var logger = require('morgan');
 const mongoose = require('mongoose');
 
 var app = express();
+
+const session = require('express-session');
+
+
+
+app.use(session({
+  secret: 'yourSecretKey',  // change to something secret
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false } // set secure:true if using HTTPS
+}));
+app.use((req, res, next) => {
+  // Mock a logged-in user by setting session userId manually
+  if (!req.session.userId) {
+    req.session.userId = '68306f5d9f7d772cd76e7ea9'; // Replace with a valid User ObjectId from your DB
+  }
+  next();
+});
+
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 var indexRouter = require('./routes/index');

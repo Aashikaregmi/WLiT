@@ -43,8 +43,25 @@
           <label for="destination">Destination:</label>
           <input type="text" id="destination" name="destination" required />
 
-          <label for="departureTime">Departure:</label>
-          <input type="time" id="departureTime" name="departureTime" required />
+          <label for="departureHour">Departure Time:</label>
+<div style="display: flex; gap: 0.5rem;">
+  <select id="departureHour" name="departureHour" required>
+    <% for (let h = 1; h <= 12; h++) { %>
+      <option value="<%= h %>"><%= h.toString().padStart(2, '0') %></option>
+    <% } %>
+  </select>
+  <span>:</span>
+  <select id="departureMinute" name="departureMinute" required>
+    <% for (let m = 0; m < 60; m += 5) { %>
+      <option value="<%= m %>"><%= m.toString().padStart(2, '0') %></option>
+    <% } %>
+  </select>
+  <select id="ampm" name="ampm" required>
+    <option value="AM">AM</option>
+    <option value="PM">PM</option>
+  </select>
+</div>
+
 
           <label for="fare">Bus Fare:</label>
           <input type="number" id="fare" name="fare" required min ="0" />

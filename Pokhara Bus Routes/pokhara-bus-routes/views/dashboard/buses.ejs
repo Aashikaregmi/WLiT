@@ -25,25 +25,29 @@
     <aside class="sidebar">
       <ul>
         <li><a href="/buses/profile/">Profile</a></li>
-        <li class="active"><a href="/buses">Availible Buses</a></li>
+        <li class="active"><a href="/buses">Available Buses</a></li>
       </ul>
     </aside>
 
     <main class="main-content row">
   <div class="scroll-container">
-    <h2>Buses from <%= pickup %></h2>
+    <h1>🚎 Buses from <%= pickup %> 🚎</h1>
 
 <% if (buses.length > 0) { %>
   <% buses.forEach(bus => { %>
     <div class="card">
       <div class="card-body">
-      <p class="card-title"><strong>Bus Number:</strong> <%= bus.busNumber %></p>
-      <p class="card-text"><strong>From:</strong> <%= bus.pickUp %></p>
-      <p class="card-text"><strong>To:</strong> <%= bus.destination %></p>
+      <p class="card-title bus-name"><strong>🚍 Bus Number: </strong> <%= bus.busNumber %></p>
+      <p><strong>From:</strong> <%= bus.pickUp %></p>
+      <p><strong>To:</strong> <%= bus.destination %></p>
       <p><strong>Fare:</strong> Rs. <%= bus.fare %></p>
-      <p><strong>Departure:</strong> 
+      <p class="card-subtitle"><strong>Departure:</strong> 
         <%= new Date(bus.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %>
       </p>
+      <form action="/buses/user/select/<%= bus._id %>" method="POST">
+  <button type="submit" class="btn btn-primary">Select</button>
+</form>
+
     </div>
   </div>
   <% }) %>

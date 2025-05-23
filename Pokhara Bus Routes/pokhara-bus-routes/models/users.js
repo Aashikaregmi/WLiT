@@ -32,7 +32,11 @@ const UserSchema = mongoose.Schema(
         type: Number,
         default: 0
       }
-    }
+    },
+    buses: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Bus'
+    }]
   },
   {
     timestamps: true
@@ -41,3 +45,4 @@ const UserSchema = mongoose.Schema(
 
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
+

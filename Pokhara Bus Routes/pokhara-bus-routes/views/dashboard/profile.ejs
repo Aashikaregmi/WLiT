@@ -24,18 +24,64 @@
   <div class="container">
     <aside class="sidebar">
       <ul>
-        <li class="active"><a href="/buses/profile/">Profile</a></li>
-        <li class="active"><a href="/buses/user/">Available Buses</a></li>
+        <li class="active"><a href="/buses/profile/">👤 Profile</a></li>
+        <li><a href="/buses/user/">🚍 Available Buses</a></li>
       </ul>
     </aside>
 
-    <main class="">
-        <div class="counter">
-          <span class="btn btn-primary count"  >Catched Buses :</span>
-          <span class="btn btn-danger count"  >Missed buses :</span>
-        </div>
-    </main>
-  
+    <main class="main-content">
+  <div class="counter">
+    <span class="btn btn-primary count">Catched Buses:</span>
+    <span class="btn btn-danger count">Missed buses:</span>
   </div>
+
+  <% if (buses && buses.length > 0) { %>
+    <% buses.forEach(bus => { %>
+      <div class="card">
+        <div class="card-body">
+          <p><strong>Bus Number:</strong> <%= bus.busNumber %></p>
+          <p><strong>From:</strong> <%= bus.pickUp %></p>
+          <p><strong>To:</strong> <%= bus.destination %></p>
+          <p><strong>Fare:</strong> Rs. <%= bus.fare %></p>
+          <p><strong>Departure in:</strong> <%= bus.departureInMinutes %> minutes</p>
+        </div>
+
+        <% if (showAlert) { %>
+          <script>
+            alert('🕒 Hurry! Your bus departs in less than 30 minutes!');
+          </script>
+          <audio autoplay>
+            <source src="/audio/short-alert.mp3" type="audio/mp3">
+          </audio>
+        <% } %>
+
+        <% if (showAlarm) { %>
+          <div class="alarm-body scroll-container">
+            <div class="gif-container">
+              <img src="/images/bus.gif" alt="Bus is near!" />
+              <audio id="loop-audio" autoplay loop>
+                <source src="/audio/alarm.mp3" type="audio/mp3">
+              </audio>
+              <button class="btn btn-danger" onclick="stopAlarm()">Stop Alarm</button>
+            </div>
+          </div>
+
+          <script>
+            function stopAlarm() {
+              const audio = document.getElementById('loop-audio');
+              if (audio) {
+                audio.pause();
+                audio.currentTime = 0;
+              }
+            }
+          </script>
+        <% } %>
+      </div>
+    <% }); %>
+  <% } else { %>
+    <p style="padding: 20px;">No bus selected yet.</p>
+  <% } %>
+</main>
+
 </body>
 </html>

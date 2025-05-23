@@ -24,7 +24,7 @@
   <div class="container">
     <aside class="sidebar">
       <ul>
-        <li class="active"><a href="/buses/profile/">Profile</a></li>
+        <li><a href="/buses/profile/">Profile</a></li>
         <li class="active"><a href="/buses/user/">Available Buses</a></li>
       </ul>
     </aside>
@@ -33,9 +33,9 @@
       
      <form action="/buses/user/filter" method="GET">
   <div class="dropdown">
-    <h1>From where do we pick you up? ☺️</h1>
+    <h1> From where do we pick you up? ☺️</h1>
     <select class="dropdown-select" name="pickup" onchange="this.form.submit()">
-      <option selected disabled class="dropdown"> Select Pickup Point </option>
+      <option selected disabled class="dropdown"> 🚏 Select Pickup Point 🚏 </option>
       <% 
       const uniquePickups = [...new Set(buses.map(bus => bus.pickUp))];
       uniquePickups.forEach(function(pickUp) {
