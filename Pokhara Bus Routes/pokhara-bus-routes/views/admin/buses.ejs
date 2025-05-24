@@ -2,61 +2,125 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Current Buses </title>
-  <link rel="stylesheet" href="/stylesheets/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Current Buses - JAMJAM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #FBCE26;
+      color: #2C3E50;
+    }
 
+    main.container {
+      max-width: 100%;
+      margin: 20px auto 20px 280px; /* Leave space for fixed sidebar */
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #0056B3;
+      margin-bottom: 20px;
+    }
+
+    .bus-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .bus-card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+    }
+
+    .bus-card h3 {
+      margin-top: 0;
+      color: #0056B3;
+    }
+
+    .bus-card p {
+      margin: 8px 0;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background-color: #0056B3;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #003F80;
+    }
+
+    .btn-danger {
+      background-color: #c0392b;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #992d22;
+    }
+
+    form.inline {
+      display: inline;
+    }
+
+    /* Sticky sidebar placeholder, assuming CSS for sidebar uses position: fixed */
+    .sidebar-placeholder {
+      width: 260px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+    }
+  </style>
+  <%- include('../partials/sidebar', { currentUrl: '/buses' }) %>
+  <%- include('../partials/navbar', { currentUrl: '/buses' }) %>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-left">
-      <img src="/images/logo.png" alt="Logo" class="logo" />
-      <b>Pokhara Bus Routes</b>
-    </div>
-    <div class="nav-center">
-      <h1> Admin Panel</h1>
-    </div>
-    <div class="nav-right">
-      <button class="btn btn-danger">LogOut</button>
-    </div>
-  </nav>
-
-  <div class="container">
-    <aside class="sidebar">
-      <ul>
-        <li class="active"><a href="/buses">Show Buses</a></li>
-        <li><a href="/buses/add">Add Buses</a></li>
-      </ul>
-    </aside>
-
-    <main class="main-content row">
-  <div class="scroll-container">
-    <% busList.forEach(function(bus) { %>
-      <div class="card">
-        <div class="card-body">
-          <h3 class="card-title bus-name"><%= bus.busNumber %></h3>
-          <h4 class="card-subtitle">Your Bus Departs in: 
-            <%= new Date(bus.departureTime).toLocaleTimeString('en-US', {
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: true
-            }) %>
-          </h4>
-          <p class="card-text">From: <%= bus.pickUp %></p>
-          <p class="card-text">To: <%= bus.destination %></p>
-          <h4 class="card-subtitle">Fare: Rs. <%= bus.fare %></h4>
-          <button class="btn btn-primary">
-            <a href="/buses/edit/<%= bus._id %>" class="text-white">Edit</a>
-          </button>
-          <form action="/buses/saveDeleted/<%= bus._id %>" method="POST" style="display:inline;">
-            <button class="btn btn-danger" type="submit">Delete</button>
-          </form>
+  <main class="container">
+    <h2>Currently Available Buses:</h2>
+    <div class="bus-list">
+      <% busList.forEach(function(bus) { %>
+        <div class="bus-card">
+          <h3>Bus <%= bus.busNumber %></h3>
+          <p>Departs: <%= new Date(bus.departureTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }) %></p>
+          <p>From: <%= bus.pickUp %></p>
+          <p>To: <%= bus.destination %></p>
+          <p>Fare: Rs. <%= bus.fare %></p>
+          <div class="button-group">
+            <a href="/buses/edit/<%= bus._id %>" class="btn btn-primary">Edit</a>
+            <form action="/buses/saveDeleted/<%= bus._id %>" method="POST" class="inline">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </div>
         </div>
-      </div>
-    <% }) %>
-  </div>
-</main>
-
-  </div>
+      <% }) %>
+    </div>
+  </main>
 </body>
 </html>
+

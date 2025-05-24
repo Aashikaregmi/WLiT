@@ -3,60 +3,174 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Current Buses </title>
-  <link rel="stylesheet" href="/stylesheets/style.css" />
+  <title>Available Buses - JAMJAM</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f9f9f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    /* Container for main content */
+    main.container {
+      flex: 1;
+      max-width: 900px;
+      margin: 4rem auto 2rem;
+      padding: 0 1rem;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    /* Card style for buses */
+    .bus-card {
+      background: linear-gradient(135deg, #ffffff, #f0f4ff);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      padding: 1.75rem 2rem;
+      width: 100%;
+      max-width: 600px;
+      transition: box-shadow 0.3s ease;
+    }
+    .bus-card:hover {
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+    }
+    .bus-card h3 {
+      margin: 0 0 0.5rem 0;
+      color: #0056b3;
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+    .bus-info p {
+      margin: 0.3rem 0;
+      font-weight: 600;
+    }
+    .bus-info p span {
+      font-weight: 400;
+      color: #555;
+    }
+    .btn-primary {
+      background-color: #0056b3;
+      color: white;
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 1rem;
+      display: inline-block;
+    }
+    .btn-primary:hover {
+      background-color: #003d7a;
+    }
+    main.container {
+      flex: 1;
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center; /* horizontally center */
+      overflow-y: auto;
+    }
 
+    /* Center bus cards vertically with gap */
+    .bus-cards-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 700px;
+      align-items: center;
+    }
+
+    /* Bus card style */
+    .bus-card {
+      background: linear-gradient(135deg, #ffffff, #f0f4ff);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      padding: 1.75rem 2rem;
+      width: 100%;
+      max-width: 600px;
+      transition: box-shadow 0.3s ease;
+    }
+    .bus-card:hover {
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+    }
+    .bus-card h3 {
+      margin: 0 0 0.5rem 0;
+      color: #0056b3;
+      font-weight: 700;
+      font-size: 1.4rem;
+    }
+    .bus-info p {
+      margin: 0.3rem 0;
+      font-weight: 600;
+    }
+    .bus-info p span {
+      font-weight: 400;
+      color: #555;
+    }
+    /* Footer */
+    footer {
+      padding: 1rem 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+      border-top: 1px solid #ddd;
+      background-color: #fff;
+      flex-shrink: 0;
+      margin-top: auto;
+    }
+  </style>
+<%- include('../partials/navbar', { currentUrl: '/buses/user' }) %>
+<%- include('../partials/userSidebar', { currentUrl }) %>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-left">
-      <img src="/images/logo.png" alt="Logo" class="logo" />
-      <b>Pokhara Bus Routes</b>
-    </div>
-    <div class="nav-center">
-      <h1> Hello User</h1>
-    </div>
-    <div class="nav-right">
-      <button class="btn btn-danger">LogOut</button>
-    </div>
-  </nav>
+  <main class="container">
+    <h2>🚎 Buses from <%= pickup %> 🚎</h2>
+    <% if (buses.length > 0) { %>
+      <% buses.forEach(bus => { %>
+        <div class="bus-card">
+          <h3>🚍 Bus Number: <%= bus.busNumber %></h3>
+          <div class="bus-info">
+            <p><strong>From:</strong> <span><%= bus.pickUp %></span></p>
+            <p><strong>To:</strong> <span><%= bus.destination %></span></p>
+            <p><strong>Fare:</strong> <span>Rs. <%= bus.fare %></span></p>
+            <p><strong>Departure:</strong> 
+              <span><%= new Date(bus.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></span>
+            </p>
+          </div>
+          <form action="/buses/user/select/<%= bus._id %>" method="POST">
+            <button type="submit" class="btn-primary">Select</button>
+          </form>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <p>No buses found from this location.</p>
+    <% } %>
+  </main>
 
-  <div class="container">
-    <aside class="sidebar">
-      <ul>
-        <li><a href="/buses/profile/">Profile</a></li>
-        <li class="active"><a href="/buses">Available Buses</a></li>
-      </ul>
-    </aside>
-
-    <main class="main-content row">
-  <div class="scroll-container">
-    <h1>🚎 Buses from <%= pickup %> 🚎</h1>
-
-<% if (buses.length > 0) { %>
-  <% buses.forEach(bus => { %>
-    <div class="card">
-      <div class="card-body">
-      <p class="card-title bus-name"><strong>🚍 Bus Number: </strong> <%= bus.busNumber %></p>
-      <p><strong>From:</strong> <%= bus.pickUp %></p>
-      <p><strong>To:</strong> <%= bus.destination %></p>
-      <p><strong>Fare:</strong> Rs. <%= bus.fare %></p>
-      <p class="card-subtitle"><strong>Departure:</strong> 
-        <%= new Date(bus.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %>
-      </p>
-      <form action="/buses/user/select/<%= bus._id %>" method="POST">
-  <button type="submit" class="btn btn-primary">Select</button>
-</form>
-
-    </div>
-  </div>
-  <% }) %>
-<% } else { %>
-  <p>No buses found from this location.</p>
-<% } %>
-  </div>
-</main>
-
-  </div>
+  <footer>
+    <p>© 2025 JAMJAM | Contact | Terms | Privacy</p>
+  </footer>
 </body>
 </html>
+
+
+
+
+

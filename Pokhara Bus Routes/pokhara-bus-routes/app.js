@@ -25,6 +25,12 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use((req, res, next) => {
+  res.locals.currentUrl = req.originalUrl;
+  next();
+});
+
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -32,6 +38,9 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var adminRouter = require('./routes/admin');
 const busesRouter = require('./routes/buses');
+// const pagesRouter = require('./routes/pages');
+
+
 
 mongoose.connect('mongodb+srv://aashikaregmi1234:fZTybGcEwmJiaJ0e@pokhara-bus-routes.l00ffuc.mongodb.net/?retryWrites=true&w=majority&appName=Pokhara-Bus-Routes')
 .then(()=> console.log('Connected!!'))
@@ -52,6 +61,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/admin', adminRouter);
 app.use('/buses', busesRouter);
+// app.use('/pages', pagesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
