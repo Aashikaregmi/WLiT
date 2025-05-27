@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Select Pickup - JAMJAM</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f9f9f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+
+    main.container {
+      flex: 1;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #map-container {
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+
+    #map {
+      width: 100%;
+      height: 300px;
+      border-radius: 16px;
+    }
+
+    .dropdown {
+      padding: 2rem 3rem;
+      background: linear-gradient(135deg, #ffffff, #f0f4ff);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      text-align: center;
+      width: 100%;
+      max-width: 420px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .dropdown:hover {
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .dropdown h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      color: #0056b3;
+      font-weight: 700;
+    }
+
+    .dropdown-select {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      appearance: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3csvg width='16' height='16' fill='%23666' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M4 6l4 4 4-4' stroke='%23666' stroke-width='2' fill='none' fill-rule='evenodd'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1em;
+    }
+
+    .dropdown-select:focus {
+      border-color: #0056b3;
+      box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.15);
+      outline: none;
+    }
+
+    #busGif {
+      display: none;
+      width: 220px;
+      margin-top: 2rem;
+    }
+
+    footer {
+      padding: 1rem 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #777;
+      border-top: 1px solid #ddd;
+      background-color: #fff;
+      flex-shrink: 0;
+      margin-top: auto;
+    }
+  </style>
+</head>
+
+<%- include('../partials/navbar', { currentUrl: '/buses/user' }) %>
+<%- include('../partials/userSidebar', { currentUrl }) %>
+
+<body>
+  <main class="container">
+    <!-- Map showing Pokhara -->
+    <div id="map-container">
+      <div id="map"></div>
+    </div>
+
+    <!-- Dropdown section -->
+    <section class="dropdown">
+      <h2>From where do we pick you up? ☺️</h2>
+      <form action="/buses/user/filter" method="GET">
+        <select class="dropdown-select" name="pickup" onchange="this.form.submit()">
+          <option selected disabled>🚏 Select Pickup Point 🚏</option>
+          <% 
+            const uniquePickups = [...new Set(buses.map(bus => bus.pickUp))];
+            uniquePickups.forEach(function(pickUp) {
+          %>
+            <option value="<%= pickUp %>"><%= pickUp %></option>
+          <% }) %>
+        </select>
+      </form>
+    </section>
+
+    <!-- GIF will appear here when alarm is triggered -->
+    <img id="busGif" src="/images/Bus.gif" alt="Bus Arriving" />
+  </main>
+
+  <footer>
+    <p>© 2025 JAMJAM | Contact | Terms | Privacy</p>
+  </footer>
+
+  <!-- Audio for alarm -->
+  <audio id="alarmSound" src="/audio/alarm.mp3" preload="auto"></audio>
+
+  <!-- Map Script -->
+  <script>
+    const map = L.map('map').setView([28.2096, 83.9856], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.marker([28.2096, 83.9856]).addTo(map)
+      .bindPopup('Pokhara Pickup Point')
+      .openPopup();
+
+    function playAlarm() {
+      const alarm = document.getElementById('alarmSound');
+      const gif = document.getElementById('busGif');
+
+      gif.style.display = 'block';
+      alarm.loop = true;
+      alarm.play();
+    }
+
+    // TEST ONLY: Uncomment below to test the alarm after 3 seconds
+    // setTimeout(playAlarm, 3000);
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

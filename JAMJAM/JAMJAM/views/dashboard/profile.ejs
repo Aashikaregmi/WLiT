@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile - JAMJAM</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* Reset & base */
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #f9f9f9;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Add mainContent for compatibility with navbar/sidebar */
+    #mainContent, body > main.container {
+      flex: 1;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      width: 100%;
+      transition: margin-left 0.3s ease;
+    }
+    
+    h2, h3 {
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #222;
+    }
+    #profile-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      padding: 1rem 1.5rem;
+      flex: 1 1 150px;
+      text-align: center;
+      transition: box-shadow 0.3s ease;
+      cursor: default;
+    }
+    .stat-card:hover {
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
+    }
+    .stat-card h4 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #0056b3;
+    }
+    .stat-card p {
+      margin: 0.5rem 0 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #555;
+    }
+    #profile-bus-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .bus-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      padding: 1rem 1.5rem;
+      flex: 1 1 280px;
+      position: relative;
+      transition: box-shadow 0.3s ease;
+    }
+    .bus-card:hover {
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
+    }
+    .bus-card h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+      color: #0056b3;
+    }
+    .bus-card p {
+      margin: 0.25rem 0;
+    }
+    .alert {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      font-weight: 600;
+      color: white;
+      text-align: center;
+    }
+    .alert-warning {
+      background-color: #f3dc0d;
+      color: #333;
+    }
+    .alert-danger {
+      background-color: #df3c3c;
+    }
+    button.cancel-btn {
+      margin-top: 1rem;
+      padding: 0.4rem 0.8rem;
+      background: #d9534f;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button.cancel-btn:hover {
+      background: #c9302c;
+    }
+    /* Timer text */
+    .timer {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+      color: #007bff;
+      text-align: center;
+    }
+    /* Modal styles */
+    #catch-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    #catch-modal .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    #catch-modal button {
+      margin: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      font-weight: 600;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    #catch-yes {
+      background: #28a745;
+      color: white;
+    }
+    #catch-yes:hover {
+      background: #218838;
+    }
+    #catch-no {
+      background: #dc3545;
+      color: white;
+    }
+    #catch-no:hover {
+      background: #c82333;
+    }
+    
+    /* Bus leaving gif - Make GIF width 100% of container */
+    .bus-gif {
+      display: block;
+      margin-top: 1rem;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+    
+    /* Audio permission notice styling */
+    .audio-notice {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 5px;
+      padding: 1rem;
+      margin: 1rem 0;
+      color: #856404;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    
+    .audio-notice:hover {
+      background: #fff1b3;
+    }
+    
+    .audio-notice.enabled {
+      background: #d4edda;
+      border-color: #c3e6cb;
+      color: #155724;
+    }
+    
+    /* Footer styles */
+    footer {
+      background-color: #f1f1f1;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+    }
+
+    #fullscreen-gif {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Responsive adjustments for sidebar */
+    @media (max-width: 768px) {
+      #mainContent, body > main.container {
+        margin-left: 0 !important;
+        padding: 0 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!--navbar and sidebar partials -->
+  <%- include('../partials/navbar', { currentUrl: '/buses/profile' }) %>
+  <%- include('../partials/userSidebar', { currentUrl }) %>
+ 
+  <!-- Add mainContent div for compatibility -->
+  <div id="mainContent">
+    <main class="container">
+      <h2>👤 Your Profile</h2>
+
+      <!-- Enhanced audio permission notice -->
+      <div id="audio-notice" class="audio-notice" style="display: block;">
+        🔊 Click here to enable audio notifications for bus alerts
+      </div>
+
+      <!-- Stats -->
+      <section id="profile-stats">
+        <div class="stat-card">
+          <h4>Buses Caught</h4>
+          <p><%= stats?.caught || 0 %></p>
+        </div>
+        <div class="stat-card">
+          <h4>Buses Missed</h4>
+          <p><%= stats?.missed || 0 %></p>
+        </div>
+        <div class="stat-card">
+          <h4>Buses Cancelled</h4>
+          <p><%= stats?.cancelled || 0 %></p>
+        </div>
+      </section>
+
+      <!-- Selected Buses -->
+      <h3>🚌 Selected Buses</h3>
+      <% if (selectedBuses && selectedBuses.length > 0) { %>
+        <section id="profile-bus-list">
+          <% selectedBuses.forEach(bus => { %>
+            <div class="bus-card" data-busid="<%= bus._id %>">
+              <h3>🚍 <%= bus.busNumber %></h3>
+              <p><strong>From:</strong> <%= bus.pickUp %></p>
+              <p><strong>To:</strong> <%= bus.destination %></p>
+              <p><strong>Fare:</strong> Rs. <%= bus.fare %></p>
+              <p><strong>Departure:</strong> <%= new Date(bus.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></p>
+
+              <!-- Timer -->
+              <div id="timer-<%= bus._id %>" class="timer">--:--</div>
+
+              <!-- Cancel button -->
+              <button class="cancel-btn" onclick="cancelBus('<%= bus._id %>')">Cancel</button>
+            </div>
+          <% }) %>
+        </section>
+      <% } else { %>
+        <p>No buses selected yet.</p>
+      <% } %>
+    </main>
+  </div>
+
+  <footer>
+    <p>© 2025 JAMJAM | Contact | Terms | Privacy</p>
+  </footer>
+
+  <!-- Audio for 30 minutes alert -->
+  <audio id="beep-audio" preload="auto">
+    <source src="/audio/beep.wav" type="audio/wav">
+    <source src="/audio/beep.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Alarm Audio for <5 minutes -->
+  <audio id="alarm-audio" preload="auto">
+    <source src="/audio/alarm.mp3" type="audio/mpeg">
+    <source src="/audio/alarm.wav" type="audio/wav">
+  </audio>
+
+  <!-- Modal for catching bus question -->
+  <div id="catch-modal" aria-modal="true" role="dialog" tabindex="-1">
+    <div class="modal-content">
+      <h3>Did you catch the bus?</h3>
+      <button id="catch-yes">Yes</button>
+      <button id="catch-no">No</button>
+    </div>
+  </div>
+
+  <script>
+(() => {
+  // Ensure DOM is ready before accessing elements
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+  } else {
+    initializeApp();
+  }
+
+  function initializeApp() {
+    // Check if buses data exists
+    let buses = [];
+    try {
+      buses = <%- JSON.stringify(selectedBuses || []) %>;
+    } catch (e) {
+      console.warn('No bus data available');
+      buses = [];
+    }
+
+    // Get DOM elements with null checks
+    const beepAudio = document.getElementById('beep-audio');
+    const alarmAudio = document.getElementById('alarm-audio');
+    const modal = document.getElementById('catch-modal');
+    const catchYesBtn = document.getElementById('catch-yes');
+    const catchNoBtn = document.getElementById('catch-no');
+    const audioNotice = document.getElementById('audio-notice');
+    
+    // Check if required elements exist
+    if (!beepAudio || !alarmAudio || !modal || !catchYesBtn || !catchNoBtn) {
+      console.error('Required audio or modal elements not found');
+      return;
+    }
+
+    let modalOpen = false;
+    let currentModalBusId = null;
+    const alarmPlayingBuses = new Set();
+    const beepPlayedBuses = new Set();
+    const alarmStoppedBuses = new Set();
+    let audioEnabled = false;
+
+    // Improved audio enablement function
+    async function enableAudio() {
+      if (audioEnabled) return;
+      
+      console.log('Attempting to enable audio...');
+      
+      try {
+        // Try to play both audio elements to unlock them
+        if (beepAudio) {
+          const beepPromise = beepAudio.play();
+          if (beepPromise !== undefined) {
+            await beepPromise.then(() => {
+              beepAudio.pause();
+              beepAudio.currentTime = 0;
+              console.log('Beep audio unlocked');
+            }).catch(err => console.log('Beep unlock failed:', err));
+          }
+        }
+        
+        if (alarmAudio) {
+          const alarmPromise = alarmAudio.play();
+          if (alarmPromise !== undefined) {
+            await alarmPromise.then(() => {
+              alarmAudio.pause();
+              alarmAudio.currentTime = 0;
+              console.log('Alarm audio unlocked - Audio fully enabled!');
+              
+              audioEnabled = true;
+              
+              // Update notice
+              if (audioNotice) {
+                audioNotice.textContent = '✅ Audio notifications enabled!';
+                audioNotice.classList.add('enabled');
+                setTimeout(() => {
+                  audioNotice.style.display = 'none';
+                }, 2000);
+              }
+            }).catch(err => console.log('Alarm unlock failed:', err));
+          }
+        }
+        
+      } catch (err) {
+        console.log('Audio enable error:', err);
+      }
+    }
+
+    // Click handler for audio notice
+    if (audioNotice) {
+      audioNotice.addEventListener('click', async (e) => {
+        e.preventDefault();
+        await enableAudio();
+      });
+    }
+
+    // Auto-enable audio on any user interaction
+    const handleInteraction = async () => {
+      if (!audioEnabled) {
+        await enableAudio();
+      }
+    };
+
+    document.addEventListener('click', handleInteraction, { once: true });
+    document.addEventListener('touchstart', handleInteraction, { once: true });
+    document.addEventListener('keydown', handleInteraction, { once: true });
+
+    function formatTimeLeft(ms) {
+      if (ms <= 0) return "00:00";
+      const totalSeconds = Math.floor(ms / 1000);
+      const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+      const seconds = String(totalSeconds % 60).padStart(2, "0");
+      return `${minutes}:${seconds}`;
+    }
+
+    function clearAlerts(busCard) {
+      if (!busCard) return;
+      const alerts = busCard.querySelectorAll('.alert');
+      alerts.forEach(a => a.remove());
+    }
+
+    function showAlert(busCard, message, type) {
+      if (!busCard) return;
+      clearAlerts(busCard);
+      const alertDiv = document.createElement('div');
+      alertDiv.classList.add('alert');
+      if (type === 'warning') alertDiv.classList.add('alert-warning');
+      if (type === 'danger') alertDiv.classList.add('alert-danger');
+      alertDiv.textContent = message;
+      busCard.appendChild(alertDiv);
+    }
+
+    function showCatchModal(busId) {
+      if (modalOpen || !modal) return;
+      modalOpen = true;
+      currentModalBusId = busId;
+      modal.style.display = 'flex';
+      modal.focus();
+    }
+
+    function hideModal() {
+      if (!modal) return;
+      modal.style.display = 'none';
+      modalOpen = false;
+      currentModalBusId = null;
+      stopAlarm();
+    }
+
+    function playBeep() {
+      console.log(`Attempting to play beep - audioEnabled: ${audioEnabled}`);
+      
+      if (!audioEnabled || !beepAudio) {
+        console.log('Audio not enabled or beep element missing');
+        return;
+      }
+      
+      try {
+        beepAudio.currentTime = 0;
+        beepAudio.play().then(() => {
+          console.log('✅ Beep played successfully');
+        }).catch(err => {
+          console.log('❌ Beep play failed:', err);
+        });
+      } catch (err) {
+        console.log('Beep error:', err);
+      }
+    }
+
+    function playAlarm() {
+      console.log(`Attempting to play alarm - audioEnabled: ${audioEnabled}`);
+      
+      if (!audioEnabled) {
+        console.log('Audio not enabled, attempting to enable first...');
+        enableAudio().then(() => {
+          if (audioEnabled) {
+            console.log('Audio enabled, now playing alarm...');
+            actuallyPlayAlarm();
+          }
+        });
+        return;
+      }
+      
+      actuallyPlayAlarm();
+    }
+
+    function actuallyPlayAlarm() {
+      if (!alarmAudio) {
+        console.log('Alarm audio element not found');
+        return;
+      }
+
+      console.log('Playing alarm now...');
+      
+      try {
+        alarmAudio.loop = true;
+        alarmAudio.currentTime = 0;
+        
+        alarmAudio.play().then(() => {
+          console.log('✅ Alarm playing successfully!');
+        }).catch(err => {
+          console.log('❌ Alarm play failed:', err);
+          if (audioNotice) {
+            audioNotice.style.display = 'block';
+            audioNotice.textContent = '🔊 Click here to enable audio for alarm';
+            audioNotice.classList.remove('enabled');
+          }
+        });
+      } catch (err) {
+        console.log('Alarm error:', err);
+      }
+    }
+
+    function stopAlarm() {
+      if (!alarmAudio) return;
+      try {
+        alarmAudio.pause();
+        alarmAudio.currentTime = 0;
+        alarmAudio.loop = false;
+        alarmPlayingBuses.clear();
+        console.log('Alarm stopped');
+      } catch (err) {
+        console.log('Stop alarm error:', err);
+      }
+    }
+
+    function showBusLeavingGif(busCard, show) {
+      if (!busCard) return;
+      if (show) {
+        if (!busCard.querySelector('.bus-gif')) {
+          const gif = document.createElement('img');
+          gif.src = '/images/Bus.gif';
+          gif.alt = 'Bus Leaving';
+          gif.classList.add('bus-gif');
+          gif.onerror = () => console.log('Bus GIF failed to load');
+          busCard.appendChild(gif);
+        }
+      } else {
+        const gif = busCard.querySelector('.bus-gif');
+        if (gif) gif.remove();
+      }
+    }
+
+    function addStopAlarmButton(busCard, busId) {
+      if (!busCard || busCard.querySelector('.stop-alarm-btn')) return;
+      const btn = document.createElement('button');
+      btn.textContent = 'Stop Alarm';
+      btn.classList.add('cancel-btn', 'stop-alarm-btn');
+      btn.style.marginTop = '10px';
+      btn.style.backgroundColor = '#ffc107';
+      btn.style.color = '#212529';
+      btn.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        stopAlarm();
+        alarmStoppedBuses.add(busId);
+        btn.remove();
+        console.log('Alarm stopped by user for bus:', busId);
+      };
+      busCard.appendChild(btn);
+    }
+
+    async function cancelBus(busId) {
+      try {
+        const response = await fetch(`/buses/user/cancel/${busId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const busCard = document.querySelector(`.bus-card[data-busid="${busId}"]`);
+          if (busCard) {
+            busCard.remove();
+          }
+          location.reload();
+        } else {
+          alert('Failed to cancel bus. Please try again.');
+        }
+      } catch (err) {
+        alert('Error canceling bus: ' + err.message);
+      }
+    }
+
+    // Make cancelBus globally available
+    window.cancelBus = cancelBus;
+
+    async function updateCounters(busId, caught) {
+      try {
+        const response = await fetch('/buses/user/updateStatus', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ busId, caught })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          hideModal();
+          const busCard = document.querySelector(`.bus-card[data-busid="${busId}"]`);
+          if (busCard) busCard.remove();
+          location.reload();
+        } else {
+          alert('Failed to update status. Please try again.');
+        }
+      } catch (err) {
+        alert('Error updating status: ' + err.message);
+      }
+    }
+
+    // Event listeners
+    if (catchYesBtn) {
+      catchYesBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!currentModalBusId) return;
+        updateCounters(currentModalBusId, true);
+      });
+    }
+
+    if (catchNoBtn) {
+      catchNoBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!currentModalBusId) return;
+        updateCounters(currentModalBusId, false);
+      });
+    }
+
+    // Enhanced timer with better error handling
+    let timerInterval;
+    if (buses && buses.length > 0) {
+      timerInterval = setInterval(() => {
+        const now = Date.now();
+
+        buses.forEach(bus => {
+          if (!bus || !bus._id) return;
+          
+          const busCard = document.querySelector(`.bus-card[data-busid="${bus._id}"]`);
+          if (!busCard) return;
+
+          const timerEl = document.getElementById(`timer-${bus._id}`);
+          if (!timerEl) return;
+
+          const depTime = new Date(bus.departureTime).getTime();
+          const timeLeftMs = depTime - now;
+
+          if (timeLeftMs <= 0) {
+            timerEl.textContent = 'Departed';
+            clearAlerts(busCard);
+            showCatchModal(bus._id);
+            stopAlarm();
+            showBusLeavingGif(busCard, false);
+            return;
+          }
+
+          timerEl.textContent = formatTimeLeft(timeLeftMs);
+
+          // 5 minutes or less - play alarm
+          if (timeLeftMs <= 5 * 60 * 1000) {
+            clearAlerts(busCard);
+            showAlert(busCard, '🚨 Bus leaving soon! ≤ 5 minutes!', 'danger');
+            
+            if (!alarmPlayingBuses.has(bus._id) && !alarmStoppedBuses.has(bus._id)) {
+              console.log(`🚨 Timer ≤ 5 minutes for bus ${bus._id}, audioEnabled: ${audioEnabled}`);
+              playAlarm();
+              alarmPlayingBuses.add(bus._id);
+            }
+            
+            showBusLeavingGif(busCard, true);
+            
+            if (!alarmStoppedBuses.has(bus._id)) {
+              addStopAlarmButton(busCard, bus._id);
+            }
+            
+          } else if (timeLeftMs <= 30 * 60 * 1000) {
+            // 30 minutes warning
+            if (!beepPlayedBuses.has(bus._id)) {
+              console.log(`⚠️ Timer ≤ 30 minutes for bus ${bus._id}, audioEnabled: ${audioEnabled}`);
+              playBeep();
+              beepPlayedBuses.add(bus._id);
+            }
+            clearAlerts(busCard);
+            showAlert(busCard, '⚠️ Bus leaving soon! ≤ 30 minutes', 'warning');
+            showBusLeavingGif(busCard, false);
+            
+            const stopBtn = busCard.querySelector('.stop-alarm-btn');
+            if (stopBtn) stopBtn.remove();
+            
+            alarmStoppedBuses.delete(bus._id);
+            
+          } else {
+            // More than 30 minutes
+            clearAlerts(busCard);
+            showBusLeavingGif(busCard, false);
+            
+            const stopBtn = busCard.querySelector('.stop-alarm-btn');
+            if (stopBtn) stopBtn.remove();
+            
+            // Reset all tracking for this bus
+            alarmPlayingBuses.delete(bus._id);
+            beepPlayedBuses.delete(bus._id);
+            alarmStoppedBuses.delete(bus._id);
+          }
+        });
+      }, 1000);
+    }
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      if (timerInterval) clearInterval(timerInterval);
+      stopAlarm();
+    });
+
+    // Debug functions
+    window.testAudio = function() {
+      console.log('=== AUDIO TEST ===');
+      console.log('Audio enabled:', audioEnabled);
+      console.log('Beep audio ready state:', beepAudio ? beepAudio.readyState : 'N/A');
+      console.log('Alarm audio ready state:', alarmAudio ? alarmAudio.readyState : 'N/A');
+      
+      if (!audioEnabled) {
+        console.log('❌ Audio not enabled. Click the audio notice first!');
+        enableAudio().then(() => {
+          if (audioEnabled) {
+            console.log('Audio enabled, testing...');
+            actuallyPlayAlarm();
+            setTimeout(() => stopAlarm(), 3000);
+          }
+        });
+        return;
+      }
+      
+      console.log('🔊 Testing alarm...');
+      actuallyPlayAlarm();
+      setTimeout(() => {
+        console.log('⏹️ Stopping test alarm');
+        stopAlarm();
+      }, 3000);
+    };
+
+    window.enableAudioManually = enableAudio;
+  }
+
+})();
+  </script>
+</body>
+</html>
+

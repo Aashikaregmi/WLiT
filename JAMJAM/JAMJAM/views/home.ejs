@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - JAMJAM</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="/javascripts/main.js" defer></script>
+  <script src="/javascripts/map.js" defer></script>
+</head>
+<body>
+  <%- include('partials/navbar', { currentUrl: '/' }) %>
+  <%- include('partials/sidebar', { currentUrl: '/' }) %>
+  <main class="container">
+    <section class="section">
+      <h2>Find Your Bus</h2>
+      <div class="map-container" id="map"></div>
+      <div class="cta-buttons">
+        <a href="/buses/user" class="btn btn-success">Select Bus</a>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>© 2025 JAMJAM | Contact | Terms | Privacy</p>
+  </footer>
+</body>
+</html>
